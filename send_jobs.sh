@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 SUBMIT_FILE=run-sol67_new.sh
 JOB_IDS=()
@@ -10,5 +10,9 @@ for test in "${TESTS[@]}"; do
     JOB_IDS+=($(qsub $SUBMIT_FILE))
     cd ..
 done
+cd ..
 
+JOB_STRING=$(IFS=:; echo "${JOB_IDS[*]}")
 echo ${JOB_IDS[@]}
+
+qsub -W depend=afterok:$JOB_STRING process_results.sh 
