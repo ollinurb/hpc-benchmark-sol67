@@ -4,6 +4,8 @@ TARGET=""
 CUSTOM=false
 MAX_NODES=""
 SUBMIT_FILE=""
+ROOT_DIR=""
+OUTPUT_LOCATION=""
 
 show_help() {
     echo "Usage: $0 -t <target>"
@@ -20,6 +22,13 @@ show_help() {
     echo "                    mpirun -n 24 lmp "
     echo 
     echo "                    Then use $0 -c lmp"
+    echo
+    echo "  -o <output_loc>   If the output of your simulation is not going to "
+    echo "                    be created in the same directory as the launch script,"
+    echo "                    then indicate the location with the option -o"
+    echo
+    echo "                    Example:"
+    echo "                    ./config -t vasp -n 3 -o runs/1"
     echo
     echo "  -c <target>       Specify custom target application"
     echo
@@ -40,9 +49,11 @@ delete_test_directories() {
 }
 
 create_dirs() {
-mkdir nodes
+ROOT_DIR=benchmark_$(date +"%F_%R")
+mkdir $ROOT_DIR
+mkdir $ROOT_DIR/nodes
 for i in $(seq 1 $MAX_NODES); do
-    cp -r template nodes/$i
+    cp -r template $ROOT_DIR/nodes/$i
 done
 }
 
@@ -87,9 +98,9 @@ find_submit_file() {
 update_test_case() {
     NODES=$1
     CORES=$2
-    sed -i "/mpirun /s/mpirun .* $TARGET/mpirun -n $CORES --bind-to node --map-by core --report-bindings $TARGET/g" "nodes/$NODES/$SUBMIT_FILE"
-    sed -i "s/#PBS -l .*/#PBS -l nodes=$NODES:ppn=24:nomem128:c48:ib/g" "nodes/$NODES/$SUBMIT_FILE"
-    sed -i "s|#PBS -N \(.*\)|#PBS -N ${NODES}_\1|g" "nodes/$NODES/$SUBMIT_FILE"
+    sed -i "/mpirun /s/mpirun .* $TARGET/mpirun -n $CORES --bind-to node --map-by core --report-bindings $TARGET/g" "$ROOT_DIR/nodes/$NODES/$SUBMIT_FILE"
+    sed -i "s/#PBS -l .*/#PBS -l nodes=$NODES:ppn=24:nomem128:c48:ib/g" "$ROOT_DIR/nodes/$NODES/$SUBMIT_FILE"
+    sed -i "s|#PBS -N \(.*\)|#PBS -N ${NODES}_\1|g" "$ROOT_DIR/nodes/$NODES/$SUBMIT_FILE"
 
 
 }	
@@ -106,6 +117,17 @@ update_node() {
     done
 }
 
+save_variables() {
+    echo "TARGET=$TARGET" >> $ROOT_DIR/CONFIG
+    echo "MAX_NODES=$MAX_NODES" >> $ROOT_DIR/CONFIG
+    echo "OUTPUT_LOCATION=$OUTPUT_LOCATION" >> $ROOT_DIR/CONFIG
+    echo "SUBMIT_FILE=$SUBMIT_FILE" >> $ROOT_DIR/CONFIG
+}
+
+copy_scripts() {
+    cp -r scripts $ROOT_DIR/
+}
+
 # Check for --help before parsing options
 if [[ "$1" == "--help" ]]; then
     show_help
@@ -116,15 +138,18 @@ while getopts "t:c:n:" opt; do
         t) TARGET="$OPTARG" ;;
 	c) CUSTOM=true; TARGET="$OPTARG" ;;
 	n) MAX_NODES=$OPTARG ;;
+	o) OUTPUT_LOCATION=$OPTARG ;; 
         *) echo "Usage: $0 -t <target>"; exit 1 ;;
     esac
 done
 
 find_template_dir
-delete_test_directories
+#delete_test_directories
 create_dirs
 find_submit_file
-attach_submit_file_sendscript
+#attach_submit_file_sendscript
+save_variables
+copy_scripts
 
 if [[ "$TARGET" == "vasp" ]]; then    
     update_node

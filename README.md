@@ -29,10 +29,13 @@ Make sure all the input files are directly inside the directory.
 For VASP, the directory should look like this:
 
 ```
-hpc-benchmark-sol67/
-├── benchmark_configuration.sh
+hpc-benchmark-sol67
+├── config
 ├── README.md
-├── send_jobs.sh
+├── scripts
+│   ├── plotter.py
+│   ├── process_results.sh
+│   └── send_jobs.sh
 └── template
     ├── INCAR
     ├── KPOINTS
@@ -54,14 +57,14 @@ Make sure the output files will be created directly inside `template`.
 
 ### 3) Run configuration
 
-Run the script ´benchmark_configuration.sh´ with the following settings:
+Run the script `config` with the following settings:
 
 - `-t vasp` for benchmarking a VASP simulation
 - `-n <node amount>` to define the max amount of nodes to allocate.
 
 For example:
 ```
-./benchmark_configuration.sh -t vasp -n 4
+./config -t vasp -n 4
 ```
 SOL67 has 20 c48 nodes composed of:
 
@@ -76,12 +79,26 @@ Nevertheless, it is recommended to run the benchmark on a lower amount of nodes 
 
 ### 4) Send jobs
 
+Go into the benchmark directory/scripts
 Run the script send_jobs.sh to schedule all the tests. 
 
 ```
+cd <benchmark_dir>/scripts
 ./send_jobs.sh
 ```
 
 ### 5) Wait for all the jobs to finish
 
-TODO: Automatize the output data processing to automatically plot the results and evaluate the scaling results.
+Dependencies:
+- Python 
+- Numpy
+- Matplotlib
+
+I used the following versions:
+- Python 3.13.2
+- Numpy 2.2.3  
+-Matplotlib 3.10.1
+
+ though the script is so simple that it probably works with other versions as well.
+
+Once the jobs finish, it will run a new job that plots the results. You can use `scp` to download the results into your local machine to view the plots.
