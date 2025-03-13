@@ -109,6 +109,11 @@ I used the following versions:
 "${SHELL}" <(curl -L micro.mamba.pm/install.sh)
 ```
 
+Create the enviroment that will be needed in the graphic creation stage.
+
+```
+micromamba -y create -n benchmark_plotter -f requirements.txt
+```
 
 
 Once the jobs finish, it will run a new job that plots the results. You can use `scp` to download the results into your local machine to view the plots.
