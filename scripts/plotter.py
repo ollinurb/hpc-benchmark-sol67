@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read benchmark data
-data = np.loadtxt("example_output.dat")  # File format: "nodes time"
+data = np.loadtxt("output.dat")  # File format: "nodes time"
 nodes = data[:, 0]
 times = data[:, 1]
 

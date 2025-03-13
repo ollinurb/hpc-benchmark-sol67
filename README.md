@@ -101,4 +101,14 @@ I used the following versions:
 
  though the script is so simple that it probably works with other versions as well.
 
+#### Micromamba enviroment
+
+1) If not installed, install micromamba.
+
+```
+"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
+```
+
+
+
 Once the jobs finish, it will run a new job that plots the results. You can use `scp` to download the results into your local machine to view the plots.
