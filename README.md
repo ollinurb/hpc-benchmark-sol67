@@ -11,7 +11,7 @@ Programs available:
 
 ## Installation
 
-### 1) Clone this repository:
+### 1) Clone this repository
 ```
 git clone https://github.com/ollinurb/hpc-benchmark-sol67
 ```
@@ -97,7 +97,7 @@ Dependencies:
 I used the following versions:
 - Python 3.13.2
 - Numpy 2.2.3  
--Matplotlib 3.10.1
+- Matplotlib 3.10.1
 
  though the script is so simple that it probably works with other versions as well.
 

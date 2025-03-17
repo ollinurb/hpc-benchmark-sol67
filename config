@@ -98,7 +98,7 @@ find_submit_file() {
 update_test_case() {
     NODES=$1
     CORES=$2
-    sed -i "/mpirun /s/mpirun .* $TARGET/mpirun -n $CORES --bind-to node --map-by core --report-bindings $TARGET/g" "$ROOT_DIR/nodes/$NODES/$SUBMIT_FILE"
+    sed -i "/mpirun /s/mpirun .* $TARGET/mpirun -n $CORES --map-by node --bind-to core --report-bindings $TARGET/g" "$ROOT_DIR/nodes/$NODES/$SUBMIT_FILE"
     sed -i "s/#PBS -l .*/#PBS -l nodes=$NODES:ppn=24:nomem128:c48:ib/g" "$ROOT_DIR/nodes/$NODES/$SUBMIT_FILE"
     sed -i "s|#PBS -N \(.*\)|#PBS -N ${NODES}_\1|g" "$ROOT_DIR/nodes/$NODES/$SUBMIT_FILE"
 
